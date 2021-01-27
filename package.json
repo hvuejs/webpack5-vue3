@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack serve --progress --config ./webpack.config.js"
+    "dev": "webpack serve --progress --config ./webpack.dev.js",
+    "build": "webpack --config ./webpack.prod.js"
   },
   "keywords": [],
   "author": "",

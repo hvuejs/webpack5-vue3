@@ -5,8 +5,16 @@
 
 ### 启动
 
-```js
+```base
 
   yarn dev || npm run dev
 
+```
+
+### 打包
+
+```base
+
+  yarn build || npm run build
+  
 ```

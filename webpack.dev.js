@@ -5,7 +5,7 @@ const { VueLoaderPlugin } = require('vue-loader/dist/index')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const webpack = require('webpack')
 module.exports = {
-  mode: 'development', // 环境模式
+  mode: "development",      // 环境模式
   entry: path.resolve(__dirname, './src/main.js'), // 打包入口
   output: {
     path: path.resolve(__dirname, 'dist'), // 打包出口
