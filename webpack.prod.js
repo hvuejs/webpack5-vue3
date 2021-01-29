@@ -41,6 +41,5 @@ module.exports = {
     }),
     // 添加 VueLoaderPlugin 插件
     new VueLoaderPlugin(),
-    new webpack.HotModuleReplacementPlugin()
   ]
 }
