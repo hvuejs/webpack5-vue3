@@ -14,7 +14,8 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');//压缩css文件
+
+const CssMinimizerWebpackPlugin = require("css-minimizer-webpack-plugin"); // 替换 optimize-css-assets-webpack-plugin 插件
 
 
 const webpackConfig = merge(baseWebpackConfig, {
@@ -29,7 +30,8 @@ const webpackConfig = merge(baseWebpackConfig, {
   devtool: config.build.productionSourceMap ? config.build.devtool : false, /* 是否生成SourceMap */
   output: {
     filename: utils.assetsPath('js/[name].[chunkhash].js'),
-    chunkFilename: utils.assetsPath('js/[name].[chunkhash:8].js')
+    chunkFilename: utils.assetsPath('js/[name].[chunkhash:8].js'),
+    path: config.build.assetsRoot,
   },
   stats: {
     preset: 'errors-warnings'
@@ -71,23 +73,28 @@ const webpackConfig = merge(baseWebpackConfig, {
     ]
   },
   plugins: [
-    new CleanWebpackPlugin(),
+    new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns: ["../dist"],
+      dangerouslyAllowCleanPatternsOutsideProject: true,
+    }),
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
       'process.env': require('../config/prod.env'),
       __VUE_OPTIONS_API__: 'true',
       __VUE_PROD_DEVTOOLS__: 'false'
     }),
-    // copy custom static assets
+    // copy custom assets
     // 复制自定义的静态文件
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, '../src/assets'),
+          from: path.resolve(__dirname, '../public/assets'),
           to: config.build.assetsSubDirectory,
-          // globOptions: {
-          //   ignore: ['.*']
-          // }
+          globOptions: {
+            dot: true,
+            gitignore: true,
+            ignore: ['.*']
+          }
         }
       ]
     }),
@@ -98,19 +105,17 @@ const webpackConfig = merge(baseWebpackConfig, {
         chunkFilename: utils.assetsPath('css/[id].[contenthash:8].css')
       }
     ),
-    new OptimizeCssAssetsWebpackPlugin({
-      cssProcessorOptions: config.build.productionSourceMap
-        ? { safe: true, map: { inline: false } }
-        : { safe: true }
-    }),
+    
+    new CssMinimizerWebpackPlugin(),
     
     // generate dist index.html with correct asset hash for caching.
     // you can customize output by editing /index.html
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: 'index.html',
-      inject: true,
+      template: 'public/index.html',
+      inject: "body",
+      scriptLoading: "blocking",  // 现代浏览器支持非阻塞javascript加载(“defer”)，以提高页面启动性能。 默认：defer
       minify: {
         removeComments: true,
         collapseWhitespace: true,
