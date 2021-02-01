@@ -73,7 +73,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     new HtmlWebpackPlugin({
       // filename: 'index.html',
       template: 'public/index.html',
-      inject: true
+      inject: "body",
+      scriptLoading: "blocking"
     })  
   ],
   optimization: {
