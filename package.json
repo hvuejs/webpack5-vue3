@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "webpack serve --progress --config  build/webpack.dev.js",
     "build": "webpack --config build/webpack.prod.js",
-    "pro:build": "node build/build.js"
+    "pro:build": "node build/build.js",
+    "serve": "webpack serve --progress --config ./webpack.dev.js",
+    "build:lib": "webpack build --config ./webpack.prod.js"
   },
   "keywords": [],
   "author": "",

@@ -6,6 +6,7 @@
 <template>
   <div class="login">
     登录
+    <router-link to="/">首页</router-link>
   </div>
 </template>
 
@@ -15,6 +16,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="less" scoped>
+.login {
+    color: green;
+}
 </style>

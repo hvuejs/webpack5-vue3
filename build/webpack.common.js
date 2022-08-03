@@ -1,9 +1,9 @@
 "use strict";
-var webpack = require("webpack");
+// var webpack = require("webpack");
 const path = require("path");
 const utils = require("./utils");
 const config = require("../config");
-const { VueLoaderPlugin } = require('vue-loader/dist/index')
+const { VueLoaderPlugin } = require('vue-loader')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 function resolve(dir) {
@@ -40,12 +40,12 @@ module.exports = {
     extensions: [".js", ".vue", ".json"],
     // 别名
     alias: {
-      vue$: "vue/dist/vue.cjs.js",
+    //   vue$: "vue/dist/vue.cjs.js",
       "@": resolve("src")
     }
   },
   plugins: [new VueLoaderPlugin()],
-  target: 'web', // webpack5.x 加上之后热更新才有效果
+  target: ['web', 'es5'], // webpack5.x 加上之后热更新才有效果
   module: {
     rules: [
       // eslint 配置是否需要开启检验

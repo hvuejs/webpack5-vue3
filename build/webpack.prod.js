@@ -73,10 +73,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     ]
   },
   plugins: [
-    new CleanWebpackPlugin({
-      cleanOnceBeforeBuildPatterns: ["../dist"],
-      dangerouslyAllowCleanPatternsOutsideProject: true,
-    }),
+    
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
       'process.env': require('../config/prod.env'),
@@ -88,12 +85,13 @@ const webpackConfig = merge(baseWebpackConfig, {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, '../public/assets'),
-          to: config.build.assetsSubDirectory,
+          from: path.join(__dirname, '../public'),
+        //   to: config.build.assetsSubDirectory,
+          to: path.join(__dirname, '../dist'),
           globOptions: {
             dot: true,
-            gitignore: true,
-            ignore: ['.*']
+            gitignore: false,
+            ignore: ['**/index.html']
           }
         }
       ]
@@ -128,7 +126,9 @@ const webpackConfig = merge(baseWebpackConfig, {
       chunksSortMode: 'auto'
     }),
 
-    
+    new CleanWebpackPlugin({
+        cleanOnceBeforeBuildPatterns: ["dist"]
+    }),
   ]
 })
 
