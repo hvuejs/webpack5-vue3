@@ -1,10 +1,5 @@
-// https://github.com/michael-ciniawsky/postcss-load-config
-
 module.exports = {
-  "plugins": {
-    "postcss-import": {},
-    "postcss-url": {},
-    // to edit target browsers: use "browserslist" field in package.json
-    "autoprefixer": {}
-  }
-}
+  // Add you postcss configuration here
+  // Learn more about it at https://github.com/webpack-contrib/postcss-loader#config-files
+  plugins: [["autoprefixer"]],
+};

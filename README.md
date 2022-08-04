@@ -1,21 +1,18 @@
+# 🚀 webpack5 + vue3 + ts
 
-# webpack5.x 和 vue3.x 手搭项目
+> webpack5 搭建的 vue3 + typescript 项目
 
-[参考来源](https://mp.weixin.qq.com/s/l5gkwi6LtAEuDwxhKjBxDA)
-
-
-### 启动
-
-```base
-
-  yarn dev || npm run dev
-
+install
+```
+npm install
 ```
 
-### 打包
+dev
+```
+npm run dev
+```
 
-```base
-
-  yarn build || npm run build
-  
+build
+```
+npm run build
 ```

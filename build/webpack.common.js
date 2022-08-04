@@ -1,134 +1,112 @@
-"use strict";
-// var webpack = require("webpack");
+// Generated using webpack-cli https://github.com/webpack/webpack-cli
+
 const path = require("path");
-const utils = require("./utils");
-const config = require("../config");
-const { VueLoaderPlugin } = require('vue-loader')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const webpack = require("webpack");
+const stylesHandler = MiniCssExtractPlugin.loader;
 
-function resolve(dir) {
-  return path.join(__dirname, "../", dir);
-}
+const { VueLoaderPlugin } = require("vue-loader");
+const config = require("./config");
 
-const createLintingRule = () => ({
-  test: /\.(js|vue)$/,
-  loader: 'eslint-loader',
-  enforce: 'pre',
-  include: [resolve('src'), resolve('test')],
-  options: {
-    formatter: require('eslint-friendly-formatter'),
-    emitWarning: !config.dev.showEslintErrorsInOverlay
-  }
-})
+const base_url = "/";
 
-module.exports = {
-  context: path.resolve(__dirname, "../"),
-  entry: {
-    app: './src/main.js'
-  },
-  output: {
-    path: config.build.assetsRoot,
-    filename: "[name].js",
-    publicPath:
-    process.env.NODE_ENV === "production"
-      ? config.build.assetsPublicPath
-      : config.dev.assetsPublicPath,
-    chunkFilename: '[name].js'
-  },
-  resolve: {
-    /* 自动解析确定的扩展,频率高的文件尽量写在前面 */
-    extensions: [".js", ".vue", ".json"],
-    // 别名
-    alias: {
-    //   vue$: "vue/dist/vue.cjs.js",
-      "@": resolve("src")
-    }
-  },
-  plugins: [new VueLoaderPlugin()],
-  target: ['web', 'es5'], // webpack5.x 加上之后热更新才有效果
-  module: {
-    rules: [
-      // eslint 配置是否需要开启检验
-      ...(config.dev.useEslint ? [createLintingRule()] : []),
-      {
-        test: /\.(js|jsx)$/,
-        use: ['cache-loader', 'babel-loader'],
-        exclude: /node_modules/,
-        include: [resolve('src'), resolve('test')]
-      },
-      {
-        test: /\.vue$/,
-        use: [
-          'cache-loader',
-          {
-            loader: "vue-loader",
-            options: {
-              compilerOptions: {
-                preserveWhitespace: false // 不想让元素和元素之间有空格
-              },
-              babelParserPlugins: [
-                'jsx',
-                'classProperties',
-                'decorators-legacy'
-              ]
+const configCommon = {
+    entry: path.join(__dirname, "../src/main.ts"),
+    target: ["web", "es5"],
+    module: {
+        rules: [
+            {
+                test: /\.(ts|tsx)$/,
+                exclude: ["/node_modules/"],
+                use: [
+                    {
+                        loader: "ts-loader",
+                        options: {
+                            // 指定特定的ts编译配置，为了区分脚本的ts配置
+                            configFile: path.resolve(__dirname, "../tsconfig.json"),
+                            // 对应文件添加个.ts或.tsx后缀
+                            appendTsSuffixTo: [/\.vue$/],
+                            // transpileOnly: true, // ? 关闭类型检查，即只进行转译
+                        },
+                    },
+                ],
+            },
+            {
+                test: /\.(js|jsx)$/,
+                exclude: /node_modules/, // 不编译node_modules下的文件
+                loader: "babel-loader",
+            },
+            {
+                test: /\.vue$/,
+                use: ["vue-loader"],
+            },
+            {
+                test: /\.less$/i,
+                use: [stylesHandler, "css-loader", "postcss-loader", "less-loader"],
+            },
+            {
+                test: /\.css$/i,
+                use: [stylesHandler, "css-loader", "postcss-loader"],
+            },
+            {
+                test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
+                type: "asset",
+                parser: {
+                    dataUrlCondition: {
+                        maxSize: 2 * 1024 * 1024, // 2M----小于2M表现形式为baser64 大于2M就是 模块文件会被生成到输出的目标目录
+                    },
+                },
+                generator: {
+                    publicPath: "../../",
+                    filename: config.assetsSubDirectory + "img/[name].[hash:5][ext]", // [ext]代表文件后缀
+                },
+            },
+
+            // Add your rules for custom modules here
+            // Learn more about loaders from https://webpack.js.org/loaders/
+        ],
+    },
+    plugins: [
+        new VueLoaderPlugin(),
+
+        new HtmlWebpackPlugin({
+            template: path.join(__dirname, "../public/index.html"), // 要使用的 html 模板
+            filename: "index.html", // 打包输出的文件名
+            title: "手搭 vue3 开发环境", // index.html 模板内，通过 <%= htmlWebpackPlugin.options.title %> 拿到的变量
+            inject: "body",
+        }),
+        new webpack.DefinePlugin({
+            BASE_URL: `'${base_url}'`,
+            // __VUE_OPTIONS_API__: false, // 是否支持optionsApi
+            // __VUE_PROD_DEVTOOLS__: false // 在生成环境是否支持devtools
+        }),
+
+        new MiniCssExtractPlugin(
+            {
+                filename: config.assetsSubDirectory + 'css/[name].[contenthash:8].css',
+                chunkFilename: config.assetsSubDirectory + 'css/[id].[contenthash:8].css'
             }
-          }
-        ]
-      },
-      // {
-      //   test: /\.js$/,
-      //   loader: "babel-loader",
-      //   exclude: /node_modules/,
-      //   include: [resolve('src'), resolve('test')]
-      // },
-      {
-        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-        type: "asset",
-        parser: {
-          dataUrlCondition: {
-            maxSize: 4 * 1024 * 1024 // 4M----小于4M表现形式为baser64 大于4M就是 模块文件会被生成到输出的目标目录
-          }
+        ),
+
+        // Add your plugins here
+        // Learn more about plugins from https://webpack.js.org/configuration/plugins/
+    ],
+    resolve: {
+        extensions: [".tsx", ".ts", ".jsx", ".js", ".vue", ".json"],
+        alias: {
+            "@": path.resolve("src"),
         },
-        generator: {
-          filename: utils.assetsPath('img/[name].[hash:5][ext]') // [ext]代表文件后缀
-        }
-      },
-      {
-        test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
-        type: 'asset',
-        parser: {
-          dataUrlCondition: {
-            maxSize: 2 * 1024 * 1024 // 4M
-          }
-        },
-        generator: {
-          filename: utils.assetsPath('media/[name].[hash:5][ext]')
-        }
-      },
-      {
-        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        type: 'asset',
-        parser: {
-          dataUrlCondition: {
-            maxSize: 2 * 1024 * 1024 // 4M
-          }
-        },
-        generator: {
-          filename: utils.assetsPath('fonts/[name].[hash:5][ext]')
-        }
-      }
-    ]
-  },
-  // node: {
-  //   // prevent webpack from injecting useless setImmediate polyfill because Vue
-  //   // source contains it (although only uses it if it's native).
-  //   setImmediate: false,
-  //   // prevent webpack from injecting mocks to Node native modules
-  //   // that does not make sense for the client
-  //   dgram: "empty",
-  //   fs: "empty",
-  //   net: "empty",
-  //   tls: "empty",
-  //   child_process: "empty"
-  // }
+    },
 };
+// const isProduction = process.env.NODE_ENV == "production";
+// () => {
+//     if (isProduction) {
+//         config.mode = "production";
+//     } else {
+//         config.mode = "development";
+//     }
+//     return config;
+// };
+
+module.exports = () => configCommon;

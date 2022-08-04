@@ -1,23 +1,30 @@
 <template>
-  <div class="home">
-    <router-view />
-  </div>
+    <div class="home">
+        <img src="./assets/images/logo.png" alt="logo" />
+        <h1>{{ msg }}</h1>
+        <router-view></router-view>
+    </div>
 </template>
 
-<script>
-export default {
-  setup () {
-    return {
-      msg: '测试手搭webpack5.x项目'
-    }
-  }
-}
+<script lang="ts">
+import { defineComponent } from "vue";
+export default defineComponent({
+    setup() {
+        return {
+            msg: "搭建webpack5+vue3+ts项目",
+        };
+    },
+});
 </script>
+
 <style lang="less">
-.home {
-  color: red;
+html, body {
+    font-size: 14px;
 }
-div {
-  font-size: 18px;
+.home {
+    color: red;
+}
+a {
+    font-size: 16px;
 }
 </style>
