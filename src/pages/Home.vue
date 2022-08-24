@@ -1,5 +1,7 @@
 <template>
-  <div>
+  <div class="home">
+    <img src="../assets/images/logo.png" alt="logo" />
+    <h1>{{ msg }}</h1>
     首页
     <router-link to="/login">去登陆</router-link>
     <form class="login-form">
@@ -21,7 +23,7 @@
 import { ref } from "vue";
 
 const username = ref<string>("");
-
+let msg = ref<string>("搭建webpack5+vue3+ts项目")
 const handleSubmit = () => {
     console.log(username.value);
 }

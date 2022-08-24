@@ -1,7 +1,8 @@
 <template>
     <div class="home">
-        <img src="./assets/images/logo.png" alt="logo" />
-        <h1>{{ msg }}</h1>
+        <div>
+            <router-link to="/utils">工具</router-link>
+        </div>
         <router-view></router-view>
     </div>
 </template>
@@ -10,9 +11,7 @@
 import { defineComponent } from "vue";
 export default defineComponent({
     setup() {
-        return {
-            msg: "搭建webpack5+vue3+ts项目",
-        };
+        return { };
     },
 });
 </script>
