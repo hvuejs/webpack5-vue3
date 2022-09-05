@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>dayjs</title>
+    </head>
+    <body>
+        <script src="./dist/main.js"></script>
+        <script>
+            let day = dayjs.default;
+
+            day.localeZHCN();
+
+            console.log(day().format("YYYY-MM-DD a HH:mm:ss:SSS ddd"));
+
+            class Datejs {
+                FORMAT_DEFAULT = "YYYY-MM-DD HH:mm:ss";
+                REGEX_FORMAT =
+                    /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g;
+                constructor(date) {
+                    this.init(date);
+                }
+                init(date) {
+                    const $d = date;
+                    this.$y = $d.getFullYear();
+                    this.$M = $d.getMonth();
+                    this.$D = $d.getDate();
+                    this.$W = $d.getDay();
+                    this.$H = $d.getHours();
+                    this.$m = $d.getMinutes();
+                    this.$s = $d.getSeconds();
+                    this.$ms = $d.getMilliseconds();
+                }
+                format(formatStr) {
+                    const str = formatStr || this.FORMAT_DEFAULT;
+                    const locale = this.$locale();
+                    const { $H, $m, $M } = this;
+                    let padStart = this.padStart;
+
+                    const { weekdays, months, meridiem } = locale;
+
+                    const getShort = (arr, index, full, length) =>
+                        (arr && (arr[index] || arr(this, str))) || full[index].slice(0, length);
+                    const get$H = (num) => padStart($H % 12 || 12, num, "0");
+
+                    const meridiemFunc =
+                        meridiem ||
+                        ((hour, minute, isLowercase) => {
+                            const m = hour < 12 ? "AM" : "PM";
+                            return isLowercase ? m.toLowerCase() : m;
+                        });
+
+                    const matches = {
+                        YY: String(this.$y).slice(-2),
+                        YYYY: this.$y,
+                        M: $M + 1,
+                        MM: padStart($M + 1, 2, "0"),
+                        MMM: getShort(locale.monthsShort, $M, months, 3),
+                        MMMM: getShort(months, $M),
+                        D: this.$D,
+                        DD: padStart(this.$D, 2, "0"),
+                        d: String(this.$W),
+                        dd: getShort(locale.weekdaysMin, this.$W, weekdays, 2),
+                        ddd: getShort(locale.weekdaysShort, this.$W, weekdays, 3),
+                        dddd: weekdays[this.$W],
+                        H: String($H),
+                        HH: padStart($H, 2, "0"),
+                        h: get$H(1),
+                        hh: get$H(2),
+                        a: meridiemFunc($H, $m, true),
+                        A: meridiemFunc($H, $m, false),
+                        m: String($m),
+                        mm: padStart($m, 2, "0"),
+                        s: String(this.$s),
+                        ss: padStart(this.$s, 2, "0"),
+                        SSS: padStart(this.$ms, 3, "0"),
+                    };
+
+                    return str.replace(this.REGEX_FORMAT, (match, $1) => $1 || matches[match]);
+                }
+                padStart(string, length, pad) {
+                    const s = String(string);
+                    if (!s || s.length >= length) return string;
+                    return `${Array(length + 1 - s.length).join(pad)}${string}`;
+                }
+                $locale() {
+                    return {
+                        weekdays: "星期日_星期一_星期二_星期三_星期四_星期五_星期六".split("_"),
+                        weekdaysShort: "周日_周一_周二_周三_周四_周五_周六".split("_"),
+                        weekdaysMin: "日_一_二_三_四_五_六".split("_"),
+                        months: "一月_二月_三月_四月_五月_六月_七月_八月_九月_十月_十一月_十二月".split("_"),
+                        monthsShort: "1月_2月_3月_4月_5月_6月_7月_8月_9月_10月_11月_12月".split("_"),
+                        meridiem: (hour, minute) => {
+                            const hm = hour * 100 + minute;
+                            if (hm < 600) {
+                                return "凌晨";
+                            } else if (hm < 900) {
+                                return "早上";
+                            } else if (hm < 1100) {
+                                return "上午";
+                            } else if (hm < 1300) {
+                                return "中午";
+                            } else if (hm < 1800) {
+                                return "下午";
+                            }
+                            return "晚上";
+                        },
+                    };
+                }
+            }
+
+            function dayFormat(date, formatStr) {
+                return new Datejs(date).format(formatStr)
+            }
+
+
+            console.log(dayFormat(new Date(), "YY-MM-DD a hh:mm:ss.SSS"))
+        </script>
+    </body>
+</html>

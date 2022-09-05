@@ -5,7 +5,8 @@
     "scripts": {
         "dev": "webpack serve --mode=development --progress --config build/webpack.dev.js",
         "build": "webpack --mode=production --node-env=production --config build/webpack.prod.js",
-        "watch": "webpack --watch"
+        "watch": "webpack --watch",
+        "lib": "webpack --node-env=production"
     },
     "author": "happy",
     "devDependencies": {
